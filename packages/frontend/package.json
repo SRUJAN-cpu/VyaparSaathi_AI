@@ -13,6 +13,7 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@vyapar-saathi/shared-types": "workspace:*",
     "axios": "^1.4.0",
     "date-fns": "^2.30.0",
     "react": "^18.2.0",

@@ -9,6 +9,7 @@
   "scripts": {
     "frontend": "npm run dev --workspace=@vyapar-saathi/frontend",
     "infra": "npm run cdk --workspace=@vyapar-saathi/infrastructure",
+    "shared-types": "npm run build --workspace=@vyapar-saathi/shared-types",
     "lint": "npm run lint --workspaces --if-present",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
