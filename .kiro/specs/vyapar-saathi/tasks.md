@@ -35,15 +35,15 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Set up shared types package for cross-component communication
     - _Requirements: 1.1, 1.5, 2.1, 3.1, 4.1_
 
-- [ ] 2. Implement AWS infrastructure with CDK
-  - [ ] 2.1 Create DynamoDB tables with schemas
+- [x] 2. Implement AWS infrastructure with CDK
+  - [x] 2.1 Create DynamoDB tables with schemas
     - Define UserProfile table with partition key (userId) and GSI for location queries
     - Define Forecasts table with partition key (userId), sort key (sku), TTL attribute, and GSI for date queries
     - Define FestivalCalendar table with partition key (festivalId) and GSI for region and date queries
     - Configure on-demand billing for cost optimization
     - _Requirements: 6.3, 7.1_
   
-  - [ ] 2.2 Create S3 buckets with security and lifecycle policies
+  - [x] 2.2 Create S3 buckets with security and lifecycle policies
     - Set up raw-data bucket with server-side encryption (SSE-S3)
     - Set up processed-data bucket with server-side encryption
     - Configure lifecycle rules to transition old data to Glacier after 90 days
@@ -52,7 +52,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Set up bucket policies for least-privilege access
     - _Requirements: 7.1, 7.2_
   
-  - [ ] 2.3 Set up API Gateway with Lambda integrations
+  - [x] 2.3 Set up API Gateway with Lambda integrations
     - Create REST API with resource definitions for all endpoints
     - Configure Lambda proxy integrations for data upload, forecast, risk, and explanation endpoints
     - Add request validation schemas for input validation
@@ -60,7 +60,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Set up CloudWatch logging for API requests
     - _Requirements: 6.1, 6.4_
   
-  - [ ] 2.4 Configure Amazon Cognito for authentication
+  - [x] 2.4 Configure Amazon Cognito for authentication
     - Create user pool with email/password authentication
     - Configure password policies (minimum 8 characters, complexity requirements)
     - Add social identity providers (Google, Facebook)
@@ -68,11 +68,11 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Set up user pool triggers for custom workflows
     - _Requirements: 7.4_
   
-  - [ ]* 2.5 Write property test for access control
+  - [x] 2.5 Write property test for access control
     - **Property 14: Access Control**
     - **Validates: Requirements 7.4**
   
-  - [ ] 2.6 Deploy CDK stack to AWS
+  - [x] 2.6 Deploy CDK stack to AWS
     - Configure AWS credentials and region
     - Deploy infrastructure stack with all resources
     - Verify all resources are created successfully
