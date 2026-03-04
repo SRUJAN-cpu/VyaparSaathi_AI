@@ -5,10 +5,16 @@ Generates realistic demand patterns based on business type, seasonal factors,
 and festival impacts.
 """
 
+import os
+import sys
 import random
 from dataclasses import dataclass, field
 from typing import Dict, List, Tuple
 from enum import Enum
+
+# Import performance monitoring utilities
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from utils.performance import Cache
 
 
 class BusinessType(str, Enum):
@@ -281,6 +287,7 @@ def get_festival_multipliers(business_type: str) -> Dict[str, Dict[str, float]]:
     return festival_patterns.get(bt, festival_patterns[BusinessType.GENERAL])
 
 
+@Cache.cached(ttl_seconds=3600, key_prefix='synthetic_pattern')
 def generate_synthetic_pattern(
     business_type: str,
     region: str = "north",

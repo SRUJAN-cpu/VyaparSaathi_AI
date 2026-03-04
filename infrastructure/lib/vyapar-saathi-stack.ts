@@ -247,7 +247,7 @@ def handler(event, context):
     }
       `),
       timeout: cdk.Duration.seconds(30),
-      memorySize: 512,
+      memorySize: 1024, // Increased for CSV processing
       environment: {
         USER_PROFILE_TABLE: this.userProfileTable.tableName,
         RAW_DATA_BUCKET: this.rawDataBucket.bucketName,
@@ -267,7 +267,7 @@ def handler(event, context):
     }
       `),
       timeout: cdk.Duration.seconds(30),
-      memorySize: 1024,
+      memorySize: 2048, // Increased for ML forecasting
       environment: {
         FORECASTS_TABLE: this.forecastsTable.tableName,
         FESTIVAL_CALENDAR_TABLE: this.festivalCalendarTable.tableName,
@@ -287,7 +287,7 @@ def handler(event, context):
     }
       `),
       timeout: cdk.Duration.seconds(30),
-      memorySize: 512,
+      memorySize: 1024, // Increased for risk calculations
       environment: {
         FORECASTS_TABLE: this.forecastsTable.tableName,
         USER_PROFILE_TABLE: this.userProfileTable.tableName,
@@ -306,7 +306,7 @@ def handler(event, context):
     }
       `),
       timeout: cdk.Duration.seconds(30),
-      memorySize: 1024,
+      memorySize: 1536, // Increased for Bedrock API calls
       environment: {
         FORECASTS_TABLE: this.forecastsTable.tableName,
       },
@@ -331,6 +331,59 @@ def handler(event, context):
         resources: ['*'],
       })
     );
+
+    // Grant CloudWatch permissions to all Lambda functions for custom metrics
+    const cloudwatchPolicy = new iam.PolicyStatement({
+      effect: iam.Effect.ALLOW,
+      actions: ['cloudwatch:PutMetricData'],
+      resources: ['*'],
+    });
+
+    dataUploadLambda.addToRolePolicy(cloudwatchPolicy);
+    forecastLambda.addToRolePolicy(cloudwatchPolicy);
+    riskAssessmentLambda.addToRolePolicy(cloudwatchPolicy);
+    explanationLambda.addToRolePolicy(cloudwatchPolicy);
+
+    // ===== CloudWatch Alarms for Performance Monitoring =====
+    
+    // Create alarms for Lambda execution time (30 second requirement)
+    const forecastAlarm = forecastLambda.metricDuration().createAlarm(this, 'ForecastDurationAlarm', {
+      alarmName: 'VyaparSaathi-Forecast-Duration-Alarm',
+      alarmDescription: 'Alert when forecast generation exceeds 25 seconds',
+      threshold: 25000, // 25 seconds (buffer before 30s limit)
+      evaluationPeriods: 2,
+      datapointsToAlarm: 2,
+      treatMissingData: cdk.aws_cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+
+    const riskAlarm = riskAssessmentLambda.metricDuration().createAlarm(this, 'RiskDurationAlarm', {
+      alarmName: 'VyaparSaathi-Risk-Duration-Alarm',
+      alarmDescription: 'Alert when risk assessment exceeds 20 seconds',
+      threshold: 20000, // 20 seconds
+      evaluationPeriods: 2,
+      datapointsToAlarm: 2,
+      treatMissingData: cdk.aws_cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+
+    // Create alarms for Lambda errors
+    const forecastErrorAlarm = forecastLambda.metricErrors().createAlarm(this, 'ForecastErrorAlarm', {
+      alarmName: 'VyaparSaathi-Forecast-Error-Alarm',
+      alarmDescription: 'Alert when forecast Lambda has errors',
+      threshold: 5,
+      evaluationPeriods: 1,
+      treatMissingData: cdk.aws_cloudwatch.TreatMissingData.NOT_BREACHING,
+    });
+
+    // Output alarm ARNs
+    new cdk.CfnOutput(this, 'ForecastDurationAlarmArn', {
+      value: forecastAlarm.alarmArn,
+      description: 'Forecast duration alarm ARN',
+    });
+
+    new cdk.CfnOutput(this, 'ForecastErrorAlarmArn', {
+      value: forecastErrorAlarm.alarmArn,
+      description: 'Forecast error alarm ARN',
+    });
 
     // ===== API Gateway (Task 2.3) =====
     
