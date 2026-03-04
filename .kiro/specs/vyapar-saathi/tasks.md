@@ -190,7 +190,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Include pre-festival, during-festival, and post-festival periods
     - _Requirements: 8.4_
 
-- [ ] 6. Checkpoint - Ensure all tests pass
+- [x] 6. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 - [x] 7. Implement forecasting engine
@@ -231,8 +231,8 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Implement caching for frequently accessed forecasts
     - _Requirements: 2.1, 7.2_
 
-- [ ] 8. Implement risk assessment component
-  - [ ] 8.1 Create risk calculation engine Lambda
+- [x] 8. Implement risk assessment component
+  - [x] 8.1 Create risk calculation engine Lambda
     - Implement Lambda function for RiskAssessment calculation
     - Calculate stockout probability using forecast and current inventory
     - Calculate days until stockout based on demand rate
@@ -245,7 +245,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - **Property 7: Risk Assessment Completeness**
     - **Validates: Requirements 3.1, 3.2**
   
-  - [ ] 8.3 Implement alert generation logic
+  - [x] 8.3 Implement alert generation logic
     - Create configurable risk thresholds (low: <30%, medium: 30-60%, high: >60%)
     - Generate alerts when risk exceeds thresholds
     - Add severity indicators (low/medium/high) to alerts
@@ -256,7 +256,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - **Property 8: Risk-Based Alert Generation**
     - **Validates: Requirements 3.3**
   
-  - [ ] 8.5 Implement reorder recommendation engine
+  - [x] 8.5 Implement reorder recommendation engine
     - Calculate suggested reorder quantities based on forecast, lead time, and safety stock
     - Generate ReorderRecommendation with action (reorder/reduce/maintain)
     - Add urgency levels based on days until stockout
@@ -268,7 +268,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - **Property 9: Reorder Recommendations**
     - **Validates: Requirements 3.4, 3.5**
   
-  - [ ] 8.7 Implement risk assessment storage and retrieval
+  - [x] 8.7 Implement risk assessment storage and retrieval
     - Store RiskAssessment results in DynamoDB
     - Add indexing for efficient retrieval by userId and urgency
     - Implement notification triggers for high-urgency alerts
