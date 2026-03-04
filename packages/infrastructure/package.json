@@ -12,7 +12,7 @@
     "test": "jest"
   },
   "dependencies": {
-    "@vyapar-saathi/shared-types": "workspace:*",
+    "@vyapar-saathi/shared-types": "file:../shared-types",
     "aws-cdk-lib": "^2.88.0",
     "constructs": "^10.2.69"
   },

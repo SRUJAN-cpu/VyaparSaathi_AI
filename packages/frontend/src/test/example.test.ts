@@ -91,7 +91,7 @@ describe('Festival Data', () => {
      */
     fc.assert(
       fc.property(festivalEventArbitrary(), (festival) => {
-        for (const [category, multiplier] of Object.entries(festival.demandMultipliers)) {
+        for (const [, multiplier] of Object.entries(festival.demandMultipliers)) {
           expect(multiplier).toBeGreaterThanOrEqual(1.0);
           expect(multiplier).toBeLessThanOrEqual(5.0);
         }
