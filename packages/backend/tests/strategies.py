@@ -191,3 +191,81 @@ def inventory_data_strategy(draw) -> Dict[str, Any]:
         "reorderPoint": draw(st.integers(min_value=10, max_value=500)),
         "leadTimeDays": draw(st.integers(min_value=1, max_value=30)),
     }
+
+
+@st.composite
+def daily_prediction_strategy(draw) -> Dict[str, Any]:
+    """
+    Generate a daily prediction for forecast results.
+    """
+    days_ahead = draw(st.integers(min_value=0, max_value=14))
+    date = datetime.now() + timedelta(days=days_ahead)
+    
+    demand_forecast = draw(st.floats(min_value=1.0, max_value=1000.0, allow_nan=False, allow_infinity=False))
+    festival_multiplier = draw(st.floats(min_value=1.0, max_value=5.0, allow_nan=False, allow_infinity=False))
+    
+    # Calculate bounds around forecast
+    variance = draw(st.floats(min_value=0.1, max_value=0.5))
+    lower_bound = max(0, demand_forecast * (1 - variance))
+    upper_bound = demand_forecast * (1 + variance)
+    
+    return {
+        "date": date.strftime("%Y-%m-%d"),
+        "demandForecast": demand_forecast,
+        "lowerBound": lower_bound,
+        "upperBound": upper_bound,
+        "festivalMultiplier": festival_multiplier,
+        "confidence": draw(st.floats(min_value=0.5, max_value=0.95)),
+        "festivals": draw(st.lists(st.sampled_from(["Diwali", "Eid", "Holi", "Christmas"]), max_size=2))
+    }
+
+
+@st.composite
+def forecast_result_strategy(draw) -> Dict[str, Any]:
+    """
+    Generate a complete forecast result for testing explanations.
+    """
+    predictions = draw(st.lists(daily_prediction_strategy(), min_size=7, max_size=14))
+    
+    return {
+        "sku": draw(st.text(alphabet=st.characters(whitelist_categories=("Lu", "Nd")), min_size=5, max_size=10)),
+        "category": draw(st.sampled_from(["grocery", "apparel", "electronics", "home", "beauty"])),
+        "predictions": predictions,
+        "confidence": draw(st.floats(min_value=0.5, max_value=0.95)),
+        "methodology": draw(st.sampled_from(["ml", "pattern", "hybrid"])),
+        "assumptions": draw(st.lists(st.text(min_size=10, max_size=100), min_size=1, max_size=5))
+    }
+
+
+@st.composite
+def risk_assessment_strategy(draw) -> Dict[str, Any]:
+    """
+    Generate a risk assessment for testing explanations.
+    """
+    current_stock = draw(st.integers(min_value=0, max_value=10000))
+    
+    stockout_prob = draw(st.floats(min_value=0.0, max_value=1.0))
+    overstock_prob = draw(st.floats(min_value=0.0, max_value=1.0))
+    
+    return {
+        "sku": draw(st.text(alphabet=st.characters(whitelist_categories=("Lu", "Nd")), min_size=5, max_size=10)),
+        "category": draw(st.sampled_from(["grocery", "apparel", "electronics", "home", "beauty"])),
+        "currentStock": current_stock,
+        "stockoutRisk": {
+            "probability": stockout_prob,
+            "daysUntilStockout": draw(st.integers(min_value=0, max_value=30)),
+            "potentialLostSales": draw(st.floats(min_value=0.0, max_value=5000.0))
+        },
+        "overstockRisk": {
+            "probability": overstock_prob,
+            "excessUnits": draw(st.integers(min_value=0, max_value=5000)),
+            "carryingCost": draw(st.floats(min_value=0.0, max_value=10000.0))
+        },
+        "recommendation": {
+            "action": draw(st.sampled_from(["reorder", "reduce", "maintain"])),
+            "suggestedQuantity": draw(st.integers(min_value=0, max_value=5000)),
+            "urgency": draw(st.sampled_from(["low", "medium", "high"])),
+            "reasoning": draw(st.lists(st.text(min_size=10, max_size=100), min_size=1, max_size=5)),
+            "confidence": draw(st.floats(min_value=0.5, max_value=0.95))
+        }
+    }

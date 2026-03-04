@@ -22,6 +22,13 @@ from .alert_generator import generate_alert
 from .reorder_engine import calculate_reorder_recommendation
 from .storage import store_risk_assessment
 from forecast_engine.storage import get_latest_forecast_for_sku
+from utils.error_handling import (
+    ValidationError,
+    DataNotFoundError,
+    ErrorResponseFormatter,
+    VyaparSaathiError
+)
+from utils.performance import lambda_handler_wrapper, PerformanceMonitor
 
 
 # Initialize AWS clients
@@ -249,6 +256,7 @@ def assess_multiple_skus(
     }
 
 
+@lambda_handler_wrapper
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Lambda handler for risk assessment requests.

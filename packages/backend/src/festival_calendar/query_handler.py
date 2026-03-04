@@ -14,6 +14,11 @@ from decimal import Decimal
 import boto3
 from botocore.exceptions import ClientError
 
+# Import performance monitoring utilities
+import sys
+sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+from utils.performance import PerformanceMonitor, Cache, lambda_handler_wrapper
+
 
 # Initialize DynamoDB client
 dynamodb = boto3.client('dynamodb')
@@ -85,6 +90,7 @@ def is_cache_valid(cache_entry: Dict[str, Any]) -> bool:
     return age_seconds < CACHE_TTL_SECONDS
 
 
+@PerformanceMonitor.measure_execution_time
 def query_festivals_by_date_range(
     start_date: str,
     end_date: str,
@@ -222,6 +228,7 @@ def filter_festivals_by_categories(
     return filtered_festivals
 
 
+@lambda_handler_wrapper
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Lambda handler for festival calendar queries.

@@ -4,10 +4,22 @@ Transforms validated data into standardized format and stores in S3
 """
 
 import json
+import os
+import sys
 from typing import Dict, List, Any, Tuple
 from datetime import datetime
 import boto3
 from botocore.exceptions import ClientError
+
+# Import utilities
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+from utils.error_handling import (
+    ValidationError,
+    DatabaseError,
+    ErrorResponseFormatter,
+    VyaparSaathiError
+)
+from utils.performance import lambda_handler_wrapper, PerformanceMonitor
 
 
 class StandardizedSalesRecord:
@@ -353,6 +365,7 @@ def transform_and_store_data(user_id: str, raw_records: List[Dict[str, Any]],
     return result
 
 
+@lambda_handler_wrapper
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Lambda handler for data transformation and storage

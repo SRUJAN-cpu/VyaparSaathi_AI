@@ -23,6 +23,13 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 from festival_calendar.query_handler import query_festivals_by_date_range
 from .data_quality import assess_data_quality, determine_forecasting_method
 from .storage import store_forecast_results
+from utils.error_handling import (
+    ValidationError,
+    DataNotFoundError,
+    ErrorResponseFormatter,
+    VyaparSaathiError
+)
+from utils.performance import lambda_handler_wrapper, PerformanceMonitor
 
 
 # Initialize AWS clients
@@ -251,6 +258,7 @@ def generate_forecast(
     return forecast_results
 
 
+@lambda_handler_wrapper
 def lambda_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     """
     Lambda handler for forecast requests.
