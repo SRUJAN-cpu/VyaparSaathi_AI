@@ -17,7 +17,7 @@ import { ReactElement } from 'react';
 export function renderWithProviders(
   ui: ReactElement,
   options?: Omit<RenderOptions, 'wrapper'>
-) {
+): ReturnType<typeof render> {
   // Add any global providers here (Router, Theme, etc.)
   // For now, just use the default render
   return render(ui, options);
