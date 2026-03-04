@@ -36,3 +36,28 @@ export const amplifyConfig = {
     },
   },
 };
+
+/**
+ * Validate Amplify configuration
+ * Logs warnings if required environment variables are missing
+ */
+export function validateAmplifyConfig(): boolean {
+  const requiredVars = [
+    'VITE_USER_POOL_ID',
+    'VITE_USER_POOL_CLIENT_ID',
+    'VITE_API_ENDPOINT',
+  ];
+
+  const missing = requiredVars.filter(varName => !import.meta.env[varName]);
+
+  if (missing.length > 0) {
+    console.warn(
+      'Missing required environment variables:',
+      missing.join(', '),
+      '\nPlease create a .env file based on .env.example'
+    );
+    return false;
+  }
+
+  return true;
+}

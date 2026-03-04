@@ -325,7 +325,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Implement caching for festival calendar and synthetic patterns
     - _Requirements: 6.1_
   
-  - [-] 10.2 Write property test for performance requirements
+  - [ ] 10.2 Write property test for performance requirements
     - **Property 11: Performance Requirements**
     - **Validates: Requirements 6.1**
   
@@ -336,7 +336,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Add circuit breaker for external service calls
     - _Requirements: 6.5_
   
-  - [x] 10.4 Write property test for error handling
+  - [ ] 10.4 Write property test for error handling
     - **Property 12: Error Handling**
     - **Validates: Requirements 6.5**
 
@@ -374,20 +374,20 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Test on various screen sizes
     - _Requirements: 5.1_
 
-- [ ] 13. Integration and end-to-end wiring
-  - [ ] 13.1 Wire frontend to backend APIs
+- [x] 13. Integration and end-to-end wiring
+  - [x] 13.1 Wire frontend to backend APIs
     - Connect all frontend components to API Gateway endpoints
     - Implement authentication flow with Cognito
     - Add loading states and error handling in UI
     - _Requirements: 5.1, 5.2, 5.3_
   
-  - [ ] 13.2 Implement orchestrator Lambda
+  - [x] 13.2 Implement orchestrator Lambda
     - Create main orchestration Lambda to coordinate workflow
     - Add logic to route requests based on data availability
     - Implement parallel processing for forecast and risk calculations
     - _Requirements: 1.4, 6.1_
   
-  - [ ]* 13.3 Write integration tests for end-to-end flows
+  - [~] 13.3 Write integration tests for end-to-end flows
     - Test complete flow from data upload to forecast display
     - Test low-data mode flow from questionnaire to recommendations
     - Test AI explanation generation for various scenarios
