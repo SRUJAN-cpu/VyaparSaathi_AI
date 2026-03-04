@@ -4,6 +4,7 @@
  */
 
 import { get, post } from 'aws-amplify/api';
+import { fetchAuthSession } from 'aws-amplify/auth';
 
 const API_NAME = 'VyaparSaathiAPI';
 
@@ -14,24 +15,45 @@ export interface ApiResponse<T> {
 }
 
 /**
+ * Get authenticated user ID from Cognito session
+ */
+async function getUserId(): Promise<string> {
+  try {
+    const session = await fetchAuthSession();
+    return session.userSub || 'anonymous';
+  } catch (error) {
+    console.error('Failed to get user session:', error);
+    return 'anonymous';
+  }
+}
+
+/**
  * Upload sales data
  */
 export async function uploadSalesData(file: File): Promise<ApiResponse<any>> {
   try {
-    const formData = new FormData();
-    formData.append('file', file);
-
+    const userId = await getUserId();
+    
+    // Read file content
+    const fileContent = await file.text();
+    
     const response = await post({
       apiName: API_NAME,
       path: '/data/upload',
       options: {
-        body: formData,
+        body: {
+          userId,
+          dataType: 'csv',
+          fileContent,
+          fileName: file.name,
+        },
       },
     }).response;
 
     const data = await response.body.json();
     return { success: true, data };
   } catch (error) {
+    console.error('Upload error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Upload failed',
@@ -44,17 +66,24 @@ export async function uploadSalesData(file: File): Promise<ApiResponse<any>> {
  */
 export async function submitQuestionnaire(data: any): Promise<ApiResponse<any>> {
   try {
+    const userId = await getUserId();
+    
     const response = await post({
       apiName: API_NAME,
-      path: '/data/questionnaire',
+      path: '/data/upload',
       options: {
-        body: data,
+        body: {
+          userId,
+          dataType: 'questionnaire',
+          questionnaireData: data,
+        },
       },
     }).response;
 
     const result = await response.body.json();
     return { success: true, data: result };
   } catch (error) {
+    console.error('Questionnaire submission error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Submission failed',
@@ -70,22 +99,24 @@ export async function getForecast(params: {
   targetFestivals?: string[];
 }): Promise<ApiResponse<any>> {
   try {
-    const queryParams = new URLSearchParams();
-    if (params.forecastHorizon) {
-      queryParams.append('horizon', params.forecastHorizon.toString());
-    }
-    if (params.targetFestivals) {
-      queryParams.append('festivals', params.targetFestivals.join(','));
-    }
-
-    const response = await get({
+    const userId = await getUserId();
+    
+    const response = await post({
       apiName: API_NAME,
-      path: `/forecast?${queryParams.toString()}`,
+      path: '/forecast',
+      options: {
+        body: {
+          userId,
+          forecastHorizon: params.forecastHorizon || 14,
+          targetFestivals: params.targetFestivals || [],
+        },
+      },
     }).response;
 
     const data = await response.body.json();
     return { success: true, data };
   } catch (error) {
+    console.error('Forecast fetch error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to fetch forecast',
@@ -98,14 +129,22 @@ export async function getForecast(params: {
  */
 export async function getRiskAssessment(): Promise<ApiResponse<any>> {
   try {
-    const response = await get({
+    const userId = await getUserId();
+    
+    const response = await post({
       apiName: API_NAME,
       path: '/risk',
+      options: {
+        body: {
+          userId,
+        },
+      },
     }).response;
 
     const data = await response.body.json();
     return { success: true, data };
   } catch (error) {
+    console.error('Risk assessment fetch error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to fetch risk assessment',
@@ -118,13 +157,17 @@ export async function getRiskAssessment(): Promise<ApiResponse<any>> {
  */
 export async function askCopilot(query: string, context?: any): Promise<ApiResponse<any>> {
   try {
+    const userId = await getUserId();
+    
     const response = await post({
       apiName: API_NAME,
-      path: '/copilot/query',
+      path: '/explanation',
       options: {
         body: {
+          userId,
           query,
-          context,
+          context: context || {},
+          complexity: 'simple',
         },
       },
     }).response;
@@ -132,6 +175,7 @@ export async function askCopilot(query: string, context?: any): Promise<ApiRespo
     const data = await response.body.json();
     return { success: true, data };
   } catch (error) {
+    console.error('Copilot query error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get response',
@@ -147,11 +191,14 @@ export async function getExplanation(
   data: any
 ): Promise<ApiResponse<any>> {
   try {
+    const userId = await getUserId();
+    
     const response = await post({
       apiName: API_NAME,
       path: '/explanation',
       options: {
         body: {
+          userId,
           context: type,
           data,
           complexity: 'simple',
@@ -162,6 +209,7 @@ export async function getExplanation(
     const result = await response.body.json();
     return { success: true, data: result };
   } catch (error) {
+    console.error('Explanation fetch error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Failed to get explanation',

@@ -243,6 +243,44 @@ def get_risk_assessment_by_id(
         return None
 
 
+def get_latest_risk_for_sku(
+    user_id: str,
+    sku: str
+) -> Optional[Dict[str, Any]]:
+    """
+    Retrieve the latest risk assessment for a specific SKU.
+    
+    Args:
+        user_id: User identifier
+        sku: Product SKU identifier
+        
+    Returns:
+        Latest risk assessment dictionary or None if not found
+    """
+    table = dynamodb.Table(RISK_ASSESSMENTS_TABLE)
+    
+    try:
+        response = table.query(
+            IndexName='UserSkuIndex',
+            KeyConditionExpression='userId = :userId AND sku = :sku',
+            ExpressionAttributeValues={
+                ':userId': user_id,
+                ':sku': sku
+            },
+            Limit=1,
+            ScanIndexForward=False  # Most recent first
+        )
+        
+        items = response.get('Items', [])
+        if items:
+            return convert_decimal_to_float(items[0])
+        return None
+        
+    except ClientError as e:
+        print(f"Error retrieving latest risk for SKU: {e}")
+        return None
+
+
 def delete_risk_assessment(
     assessment_id: str
 ) -> Dict[str, Any]:

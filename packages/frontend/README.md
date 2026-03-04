@@ -34,6 +34,13 @@ React-based web application for the VyaparSaathi festival demand and inventory r
 - Optimized navigation for small screens
 - Fluid typography with clamp()
 
+### ✅ Task 13.1: Wire Frontend to Backend APIs
+- Connected all components to API Gateway endpoints
+- Implemented authentication flow with Cognito
+- Added loading states and error handling
+- Automatic JWT token management
+- User session management
+
 ## Technology Stack
 
 - **React 18** - UI framework
@@ -44,46 +51,88 @@ React-based web application for the VyaparSaathi festival demand and inventory r
 - **Vite** - Build tool and dev server
 - **Vitest** - Testing framework
 
-## Getting Started
+## Quick Start
 
-### Prerequisites
-- Node.js >= 18.0.0
-- npm >= 9.0.0
+### Automated Setup (Recommended)
 
-### Installation
+**Linux/macOS:**
 ```bash
-npm install
+cd packages/frontend
+./setup.sh
+```
+
+**Windows:**
+```powershell
+cd packages\frontend
+.\setup.ps1
+```
+
+The setup script will:
+1. Create `.env` file from template
+2. Auto-configure from infrastructure outputs (if available)
+3. Prompt for manual configuration if needed
+
+### Manual Setup
+
+1. **Install Dependencies:**
+   ```bash
+   npm install
+   ```
+
+2. **Configure Environment:**
+   ```bash
+   cp .env.example .env
+   ```
+   
+   Edit `.env` with your AWS configuration:
+   ```env
+   VITE_USER_POOL_ID=us-east-1_AbCdEfGhI
+   VITE_USER_POOL_CLIENT_ID=1a2b3c4d5e6f7g8h9i0j
+   VITE_IDENTITY_POOL_ID=us-east-1:12345678-1234-1234-1234-123456789012
+   VITE_API_ENDPOINT=https://abc123xyz.execute-api.us-east-1.amazonaws.com/prod
+   VITE_AWS_REGION=us-east-1
+   ```
+
+3. **Get Configuration Values:**
+   
+   From CDK deployment:
+   ```bash
+   cd ../../infrastructure
+   npx cdk deploy --outputs-file outputs.json
+   ```
+   
+   Or from AWS Console:
+   - Cognito → User Pools → VyaparSaathi-UserPool
+   - API Gateway → VyaparSaathi API → Stages → prod
+
+4. **Start Development Server:**
+   ```bash
+   npm run dev
+   ```
+
+## Development
+
+### Available Scripts
+
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run preview      # Preview production build
+npm run test         # Run tests
+npm run type-check   # TypeScript type checking
+npm run lint         # Lint code
 ```
 
 ### Environment Variables
-Copy `.env.example` to `.env` and configure:
-```
-VITE_USER_POOL_ID=your-user-pool-id
-VITE_USER_POOL_CLIENT_ID=your-user-pool-client-id
-VITE_IDENTITY_POOL_ID=your-identity-pool-id
-VITE_API_ENDPOINT=https://your-api-gateway-endpoint
-VITE_AWS_REGION=us-east-1
-```
 
-### Development
-```bash
-npm run dev
-```
+Required variables:
+- `VITE_USER_POOL_ID` - Cognito User Pool ID
+- `VITE_USER_POOL_CLIENT_ID` - Cognito App Client ID
+- `VITE_API_ENDPOINT` - API Gateway endpoint URL
+- `VITE_AWS_REGION` - AWS region (default: us-east-1)
 
-### Build
-```bash
-npm run build
-```
-
-### Testing
-```bash
-npm run test
-```
-
-### Type Checking
-```bash
-npm run type-check
-```
+Optional:
+- `VITE_IDENTITY_POOL_ID` - Cognito Identity Pool ID
 
 ## Project Structure
 
@@ -105,23 +154,168 @@ src/
 │   └── CopilotPage.tsx  # AI copilot
 ├── routes/             # Route configuration
 ├── services/           # API services
+│   └── api.ts         # Backend API integration
 ├── config/             # AWS Amplify config
+│   └── amplify.ts     # Amplify configuration
 ├── styles/             # Global styles
 └── test/               # Test utilities
 ```
 
+## API Integration
+
+All API calls are handled through `services/api.ts`:
+
+### Available Functions
+
+```typescript
+// Data upload
+uploadSalesData(file: File): Promise<ApiResponse<any>>
+submitQuestionnaire(data: any): Promise<ApiResponse<any>>
+
+// Forecasting
+getForecast(params: { forecastHorizon?: number, targetFestivals?: string[] }): Promise<ApiResponse<any>>
+
+// Risk assessment
+getRiskAssessment(): Promise<ApiResponse<any>>
+
+// AI copilot
+askCopilot(query: string, context?: any): Promise<ApiResponse<any>>
+getExplanation(type: 'forecast' | 'risk', data: any): Promise<ApiResponse<any>>
+```
+
+### Authentication
+
+All API calls automatically include:
+- User ID from Cognito session
+- JWT authentication token
+- Proper error handling
+
+Example usage:
+```typescript
+const result = await uploadSalesData(file);
+if (result.success) {
+  console.log('Upload successful:', result.data);
+} else {
+  console.error('Upload failed:', result.error);
+}
+```
+
+## Authentication Flow
+
+1. **Sign Up:**
+   - Email and password required
+   - Email verification via code
+   - Password complexity enforced
+
+2. **Sign In:**
+   - Email/password authentication
+   - JWT tokens managed automatically
+   - Session persists across page reloads
+
+3. **Sign Out:**
+   - Click "Sign Out" in header
+   - Clears session and redirects to login
+
+## Deployment
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions including:
+- AWS Amplify Hosting
+- S3 + CloudFront
+- Vercel/Netlify
+- Environment configuration
+- Troubleshooting
+
+## Troubleshooting
+
+### Configuration Error on Startup
+
+**Problem:** Red error screen about missing configuration
+
+**Solution:**
+1. Ensure `.env` file exists
+2. Verify all required variables are set
+3. Restart dev server
+
+### Authentication Fails
+
+**Problem:** Cannot sign in or sign up
+
+**Solution:**
+1. Verify Cognito configuration in `.env`
+2. Check User Pool is active in AWS Console
+3. Ensure callback URLs are configured
+
+### API Calls Fail
+
+**Problem:** API requests return errors
+
+**Solution:**
+1. Verify API endpoint in `.env`
+2. Check Lambda functions are deployed
+3. Review CloudWatch logs for backend errors
+4. Verify CORS is configured in API Gateway
+
+## Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run tests in watch mode
+npm test -- --watch
+
+# Run tests with coverage
+npm test -- --coverage
+```
+
 ## Key Features
 
-- **Authentication**: AWS Cognito integration with Amplify Authenticator
+- **Authentication**: AWS Cognito with Amplify Authenticator
 - **Data Input**: Dual-mode (CSV upload or questionnaire)
 - **Visualization**: Interactive charts with Recharts
 - **AI Copilot**: Chat interface for explanations
-- **Mobile-First**: Responsive design for all screen sizes
+- **Mobile-First**: Responsive design for all devices
 - **Type-Safe**: Full TypeScript coverage
+- **Error Handling**: Comprehensive error handling and user feedback
+- **Loading States**: Visual feedback for async operations
 
-## Next Steps
+## Browser Support
 
-- Connect to actual backend APIs (Task 13.1)
-- Add loading states and error boundaries
-- Implement offline support
-- Add analytics and monitoring
+- Chrome/Edge (latest)
+- Firefox (latest)
+- Safari (latest)
+- Mobile browsers (iOS Safari, Chrome Mobile)
+
+## Performance
+
+- Code splitting for faster initial load
+- Lazy loading of routes
+- Optimized bundle size
+- Asset optimization in production
+
+## Security
+
+- HTTPS enforced in production
+- JWT token authentication
+- Secure session management
+- Environment variables for sensitive data
+- CORS protection
+
+## Contributing
+
+1. Follow TypeScript best practices
+2. Write tests for new features
+3. Ensure mobile responsiveness
+4. Update documentation
+
+## Support
+
+For issues or questions:
+1. Check browser console for errors
+2. Review CloudWatch logs for backend issues
+3. Verify AWS configuration
+4. Consult DEPLOYMENT.md
+
+## License
+
+See main project LICENSE file.
