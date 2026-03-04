@@ -336,7 +336,7 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Add circuit breaker for external service calls
     - _Requirements: 6.5_
   
-  - [ ] 10.4 Write property test for error handling
+  - [x] 10.4 Write property test for error handling
     - **Property 12: Error Handling**
     - **Validates: Requirements 6.5**
 
