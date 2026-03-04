@@ -121,8 +121,8 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Update UserProfile with data capabilities metadata
     - _Requirements: 1.5, 7.1_
 
-- [ ] 4. Implement festival calendar integration
-  - [ ] 4.1 Create festival calendar data model and seed data
+- [x] 4. Implement festival calendar integration
+  - [x] 4.1 Create festival calendar data model and seed data
     - Define FestivalEvent schema with all required fields
     - Create seed data for major festivals (Diwali, Eid, Holi, Pongal, Onam, Durga Puja)
     - Add regional variations for each festival
@@ -130,24 +130,24 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Add preparation days and duration for each festival
     - _Requirements: 2.2, 2.3_
   
-  - [ ] 4.2 Populate DynamoDB FestivalCalendar table
+  - [x] 4.2 Populate DynamoDB FestivalCalendar table
     - Create data migration script to load festival seed data
     - Verify data integrity and completeness
     - Create indexes for efficient querying by region and date
     - _Requirements: 2.2_
   
-  - [ ] 4.3 Build festival calendar query Lambda
+  - [x] 4.3 Build festival calendar query Lambda
     - Create Lambda function to query festivals by date range
     - Implement region-based filtering
     - Add caching layer using Lambda environment variables or ElastiCache
     - Return festivals with demand multipliers for specified categories
     - _Requirements: 2.2, 2.3_
   
-  - [ ]* 4.4 Write property test for regional festival customization
+  - [x] 4.4 Write property test for regional festival customization
     - **Property 5: Regional Festival Customization**
     - **Validates: Requirements 2.3**
   
-  - [ ] 4.5 Implement festival impact calculation utilities
+  - [x] 4.5 Implement festival impact calculation utilities
     - Create utility functions to calculate festival impact on demand
     - Implement logic to handle overlapping festivals
     - Add support for multi-day festival periods
@@ -318,121 +318,82 @@ Implementation uses TypeScript for frontend and CDK infrastructure, Python for L
     - Add fallback responses for out-of-scope queries
     - _Requirements: 4.3_
 
-- [ ] 10. Implement AWS infrastructure with CDK
-  - [ ] 10.1 Create DynamoDB tables
-    - Define UserProfile table with GSI for location queries
-    - Define Forecasts table with TTL and SKU indexing
-    - Define FestivalCalendar table with region indexing
-    - _Requirements: 6.3, 7.1_
-  
-  - [ ] 10.2 Create S3 buckets with lifecycle policies
-    - Set up raw data bucket with encryption
-    - Set up processed data bucket with lifecycle rules
-    - Configure CORS for frontend uploads
-    - _Requirements: 7.1, 7.2_
-  
-  - [ ] 10.3 Set up API Gateway and Lambda integrations
-    - Create REST API with resource definitions
-    - Configure Lambda proxy integrations for all endpoints
-    - Add request validation and rate limiting
-    - _Requirements: 6.1, 6.4_
-  
-  - [ ] 10.4 Configure Amazon Cognito authentication
-    - Create user pool with email/password authentication
-    - Add social login providers (Google, Facebook)
-    - Configure JWT token validation in API Gateway
-    - _Requirements: 7.4_
-  
-  - [ ]* 10.5 Write property test for access control
-    - **Property 14: Access Control**
-    - **Validates: Requirements 7.4**
-  
-  - [ ] 10.6 Implement data lifecycle and deletion policies
-    - Add DynamoDB TTL for forecast data
-    - Implement account deletion Lambda with cascading deletes
-    - Configure S3 lifecycle policies for data retention
-    - _Requirements: 7.2, 7.3_
-  
-  - [ ]* 10.7 Write property test for data lifecycle management
-    - **Property 13: Data Lifecycle Management**
-    - **Validates: Requirements 7.2, 7.3**
-
-- [ ] 11. Implement performance optimization and error handling
-  - [ ] 11.1 Add performance monitoring and optimization
+- [ ] 10. Implement performance optimization and error handling
+  - [ ] 10.1 Add performance monitoring and optimization
     - Configure Lambda memory and timeout settings
     - Add CloudWatch metrics for response times
     - Implement caching for festival calendar and synthetic patterns
     - _Requirements: 6.1_
   
-  - [ ]* 11.2 Write property test for performance requirements
+  - [ ]* 10.2 Write property test for performance requirements
     - **Property 11: Performance Requirements**
     - **Validates: Requirements 6.1**
   
-  - [ ] 11.3 Implement comprehensive error handling
+  - [ ] 10.3 Implement comprehensive error handling
     - Add try-catch blocks with specific error types
     - Create error response formatter with clear messages
     - Implement retry logic with exponential backoff
     - Add circuit breaker for external service calls
     - _Requirements: 6.5_
   
-  - [ ]* 11.4 Write property test for error handling
+  - [ ]* 10.4 Write property test for error handling
     - **Property 12: Error Handling**
     - **Validates: Requirements 6.5**
 
-- [ ] 12. Checkpoint - Ensure all tests pass
+- [ ] 11. Checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
-- [ ] 13. Implement frontend application
-  - [ ] 13.1 Create React application structure
+- [ ] 12. Implement frontend application
+  - [ ] 12.1 Create React application structure
     - Set up React project with TypeScript
     - Configure routing with React Router
     - Add AWS Amplify for authentication and API calls
     - _Requirements: 5.1_
   
-  - [ ] 13.2 Implement data input interface
+  - [ ] 12.2 Implement data input interface
     - Create CSV upload component with drag-and-drop
     - Build low-data mode questionnaire form
     - Add input validation and error display
     - _Requirements: 5.2_
   
-  - [ ] 13.3 Implement forecast and risk visualization
+  - [ ] 12.3 Implement forecast and risk visualization
     - Create dashboard with forecast charts (line graphs for demand predictions)
     - Build risk indicator components with color coding
     - Add reorder recommendation cards
     - _Requirements: 5.3_
   
-  - [ ] 13.4 Implement AI copilot interface
+  - [ ] 12.4 Implement AI copilot interface
     - Create chat-style interface for user queries
     - Display explanations with key insights and assumptions
     - Add contextual help and tooltips
     - _Requirements: 5.4_
   
-  - [ ] 13.5 Add mobile responsiveness
+  - [ ] 12.5 Add mobile responsiveness
     - Implement responsive layouts for mobile devices
     - Optimize touch interactions for mobile
     - Test on various screen sizes
     - _Requirements: 5.1_
 
-- [ ] 14. Integration and end-to-end wiring
-  - [ ] 14.1 Wire frontend to backend APIs
+- [ ] 13. Integration and end-to-end wiring
+  - [ ] 13.1 Wire frontend to backend APIs
     - Connect all frontend components to API Gateway endpoints
     - Implement authentication flow with Cognito
     - Add loading states and error handling in UI
     - _Requirements: 5.1, 5.2, 5.3_
   
-  - [ ] 14.2 Implement orchestrator Lambda
+  - [ ] 13.2 Implement orchestrator Lambda
     - Create main orchestration Lambda to coordinate workflow
     - Add logic to route requests based on data availability
     - Implement parallel processing for forecast and risk calculations
     - _Requirements: 1.4, 6.1_
   
-  - [ ]* 14.3 Write integration tests for end-to-end flows
+  - [ ]* 13.3 Write integration tests for end-to-end flows
     - Test complete flow from data upload to forecast display
     - Test low-data mode flow from questionnaire to recommendations
     - Test AI explanation generation for various scenarios
     - _Requirements: 1.1, 2.1, 3.1, 4.1_
 
-- [ ] 15. Final checkpoint - Ensure all tests pass
+- [ ] 14. Final checkpoint - Ensure all tests pass
   - Ensure all tests pass, ask the user if questions arise.
 
 ## Notes
